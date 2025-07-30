@@ -1,4 +1,6 @@
 <script lang="ts">
+    import { goto } from '$app/navigation';
+
     let modalAberto: string | null = null;
     const materias: string[] = ['Física', 'Química', 'Matemática'];
 
@@ -18,6 +20,11 @@
 
     const autoFocus = (node: HTMLElement) => {
         setTimeout(() => node.focus(), 0);
+    };
+
+    const navegarPara = (rota: string): void => {
+        fecharModal();
+        goto(rota);
     };
 </script>
 
@@ -90,9 +97,41 @@
 
                 <h3 id="modal-title" class="text-xl font-bold mb-4">Conteúdos de {modalAberto}</h3>
                 <ul class="space-y-2 text-left mb-4">
-                    <li class="hover:underline cursor-pointer">Item 1</li>
-                    <li class="hover:underline cursor-pointer">Item 2</li>
-                    <li class="hover:underline cursor-pointer">Item 3</li>
+                    {#if modalAberto === 'Física'}
+                        <li>
+                            <button
+                                type="button"
+                                class="w-full text-left hover:underline cursor-pointer"
+                                on:click={() => navegarPara('/Fisica/01_QuedaLivre')}
+                            >
+                                01 - Queda Livre
+                            </button>
+                        </li>
+                    {/if}
+
+                    {#if modalAberto === 'Química'}
+                        <li>
+                            <button
+                                type="button"
+                                class="w-full text-left hover:underline cursor-pointer"
+                                on:click={() => navegarPara('/Quimica/01_AcidoBase')}
+                            >
+                                01 - Reação Ácido-Base
+                            </button>
+                        </li>
+                    {/if}
+
+                    {#if modalAberto === 'Matemática'}
+                        <li>
+                            <button
+                                type="button"
+                                class="w-full text-left hover:underline cursor-pointer"
+                                on:click={() => navegarPara('/Matematica/01_EquacoesBasicas')}
+                            >
+                                01 - Equações Básicas
+                            </button>
+                        </li>
+                    {/if}
                 </ul>
             </div>
         </div>

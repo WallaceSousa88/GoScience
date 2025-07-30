@@ -4,7 +4,7 @@
 </script>
 
 <header class="bg-white shadow-md">
-    <div class="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between flex-wrap">
+    <div class="w-full px-4 py-4 flex items-center justify-between flex-wrap">
         <button
             class="block md:hidden text-black order-1"
             on:click={() => (menuAberto = !menuAberto)}
@@ -41,6 +41,6 @@
     {/if}
 </header>
 
-<main class="max-w-7xl mx-auto px-4 py-6">
+<main class="w-full px-6 py-6">
     <slot />
 </main>
