@@ -1,8 +1,9 @@
 <script lang="ts">
     import { goto } from '$app/navigation';
+    import Icon from '@iconify/svelte';
 
     let modalAberto: string | null = null;
-    const materias: string[] = ['Física', 'Química', 'Matemática'];
+    const materias: string[] = ['Física', 'Matemática', 'Química'];
 
     const abrirModal = (materia: string): void => {
         modalAberto = materia;
@@ -44,12 +45,19 @@
                 type="button"
                 on:click={() => abrirModal(materia)}
                 class="flex flex-col justify-center items-center p-6 h-64 rounded-xl shadow-xl cursor-pointer hover:scale-105 transition duration-300 ease-in-out text-white
-                    {materia === 'Física' ? 'bg-purple-500' :
-                     materia === 'Química' ? 'bg-emerald-500' :
-                     'bg-orange-500'}"
+                    {materia === 'Física' ? 'bg-red-600/85' :
+                     materia === 'Matemática' ? 'bg-blue-600/85' :
+                     'bg-green-600/85'}"
             >
+
                 <span class="text-4xl mb-2">
-                    {materia === 'Física' ? '⚛️' : materia === 'Química' ? '🧪' : '📐'}
+                  {#if materia === 'Física'}
+                    <Icon icon="mdi:atom" class="w-10 h-10" />
+                  {:else if materia === 'Química'}
+                    <Icon icon="mdi:test-tube" class="w-10 h-10" />
+                  {:else}
+                    <Icon icon="tabler:math-function" class="w-10 h-10" />
+                  {/if}
                 </span>
                 <h2 class="text-3xl font-bold">{materia}</h2>
                 <p class="mt-4 text-lg text-center">Clique para explorar conteúdos.</p>
@@ -88,7 +96,7 @@
                 use:autoFocus
             >
                 <button
-                    class="absolute top-2 right-2 text-gray-500 hover:text-gray-700 text-xl font-bold"
+                    class="absolute top-2 right-2 text-black hover:text-blue-600 text-xl font-bold"
                     on:click={fecharModal}
                     aria-label="Fechar modal"
                 >

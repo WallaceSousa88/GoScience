@@ -1,9 +1,8 @@
 <script lang="ts">
 
   import '../app.css';
-  import LabVirtualIcon from '$lib/icons/LabVirtualIcon.svelte';
-  import Menu from '$lib/icons/Menu.svelte';
-  import Close from '$lib/icons/Close.svelte';
+  import Icon from '@iconify/svelte';
+
   import { slide, fade } from 'svelte/transition';
   import { onMount, tick } from 'svelte';
 
@@ -70,16 +69,16 @@
       aria-controls="menu-mobile"
     >
       {#if menuAberto}
-        <Close className="w-6 h-6 transform transition duration-300" />
+        <Icon icon="mdi:close" class="w-6 h-6 transform transition duration-300" />
       {:else}
-        <Menu className="w-6 h-6 transform transition duration-300" />
+        <Icon icon="mdi:menu" class="w-6 h-6 transform transition duration-300" />
       {/if}
     </button>
 
     <div class="flex items-center space-x-3 mx-auto md:mx-0 order-2 md:order-1">
       <a href="/" class="flex items-center space-x-2">
-        <LabVirtualIcon className="w-10 h-10 text-blue-600" />
-        <span class="text-xl font-bold text-gray-800">LabVirtual</span>
+        <Icon icon="mdi:flask-outline" class="w-10 h-10 text-black" />
+        <span class="text-xl font-bold text-black">LabVirtual</span>
       </a>
     </div>
 
