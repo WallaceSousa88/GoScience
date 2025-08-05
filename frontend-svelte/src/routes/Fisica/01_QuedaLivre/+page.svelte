@@ -43,11 +43,12 @@
   });
 </script>
 
-<div class="flex flex-col h-screen w-full px-4 py-4">
-  <div class="flex flex-col items-center justify-center gap-2 flex-none">
+<div class="flex flex-col h-screen overflow-hidden">
+  <div class="flex flex-col items-center justify-center gap-2 px-4 py-4 flex-none">
     <h1 class="text-3xl font-bold flex items-center gap-2 text-black">
       <Icon icon="hugeicons:hot-air-balloon" class="w-8 h-8" />
-      Título Principal
+      Queda Livre
+      <Icon icon="hugeicons:hot-air-balloon" class="w-8 h-8" />
     </h1>
     <p class="text-blue-600">
       <a href="https://example.com" target="_blank" class="flex items-center gap-1 hover:underline">
@@ -60,73 +61,79 @@
     </button>
   </div>
 
-  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 flex-grow">
-    <div class="bg-white rounded-lg shadow p-4 flex flex-col">
-      <h2 class="flex items-center gap-2 text-lg font-semibold text-black">
-        <Icon icon="tabler:math-function" class="w-6 h-6" />
-        Fórmulas
-      </h2>
-      <div class="mt-4 flex flex-col gap-4">
-        <div class="border border-gray-300 rounded-md p-3">
-          <h3 class="font-bold text-center text-blue-700">Modelo Simplificado</h3>
-          <p class="text-center mt-2 text-sm"><code>s = s₀ + v₀t + ½gt²</code></p>
+  <div class="h-160 px-4 pb-4 overflow-hidden">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 h-full">
+      <div class="bg-white rounded-lg shadow p-4 flex flex-col h-full overflow-auto">
+        <h2 class="flex items-center gap-2 text-lg font-semibold text-black">
+          <Icon icon="tabler:math-function" class="w-6 h-6" />
+          Fórmulas
+        </h2>
+        <div class="mt-4 flex flex-col gap-4">
+          <div class="border border-gray-300 rounded-md p-3">
+            <h3 class="font-bold text-center text-blue-700">Modelo Simplificado</h3>
+            <p class="text-center mt-2 text-sm"><code>s = s₀ + v₀t + ½gt²</code></p>
+          </div>
+          <div class="border border-gray-300 rounded-md p-3">
+            <h3 class="font-bold text-center text-blue-700">Modelo Real</h3>
+            <p class="text-center mt-2 text-sm"><code>F = mg - kv</code></p>
+          </div>
+          <div class="border border-gray-300 rounded-md p-3">
+            <h3 class="font-bold text-center text-blue-700">Variáveis</h3>
+            <ul class="list-disc list-inside mt-2 text-sm text-black">
+              <li>s: posição</li>
+              <li>s₀: posição inicial</li>
+              <li>v₀: velocidade inicial</li>
+              <li>t: tempo</li>
+              <li>g: gravidade</li>
+              <li>F: força</li>
+              <li>m: massa</li>
+              <li>k: resistência</li>
+            </ul>
+          </div>
         </div>
-        <div class="border border-gray-300 rounded-md p-3">
-          <h3 class="font-bold text-center text-blue-700">Modelo Real</h3>
-          <p class="text-center mt-2 text-sm"><code>F = mg - kv</code></p>
+      </div>
+
+      <div class="bg-white rounded-lg shadow p-4 flex flex-col h-full overflow-auto">
+        <h2 class="flex items-center gap-2 text-lg font-semibold text-black">
+          <Icon icon="tabler:settings" class="w-6 h-6" />
+          Parâmetros
+        </h2>
+        <div class="mt-4 space-y-4">
+          <label class="block text-sm">Valor Numérico:
+            <input type="number" class="mt-1 w-full border border-gray-300 rounded px-2 py-1" />
+          </label>
+          <label class="block text-sm">
+            <input type="checkbox" class="mr-2" /> Ativar opção
+          </label>
         </div>
-        <div class="border border-gray-300 rounded-md p-3">
-          <h3 class="font-bold text-center text-blue-700">Variáveis</h3>
-          <ul class="list-disc list-inside mt-2 text-sm text-black">
-            <li>s₀: posição inicial</li>
-            <li>v₀: velocidade inicial</li>
-            <li>g: gravidade</li>
-            <li>m: massa</li>
-            <li>k: resistência</li>
-          </ul>
+
+      </div>
+
+      <div class="bg-white rounded-lg shadow p-4 flex flex-col h-full overflow-auto">
+        <h2 class="flex items-center gap-2 text-lg font-semibold text-black">
+          <Icon icon="ix:project-simulation" class="w-6 h-6" />
+          Simulação
+        </h2>
+        <div class="flex-grow flex items-center justify-center mt-4 border-2 border-dashed border-gray-300 rounded">
+          <p class="text-gray-500">Área de Simulação</p>
+        </div>
+        <div class="flex justify-center gap-4 mt-4">
+          <button class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Iniciar</button>
+          <button class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">Reiniciar</button>
         </div>
       </div>
-    </div>
 
-    <div class="bg-white rounded-lg shadow p-4 flex flex-col">
-      <h2 class="flex items-center gap-2 text-lg font-semibold text-black">
-        <Icon icon="tabler:settings" class="w-6 h-6" />
-        Parâmetros
-      </h2>
-      <div class="mt-4 space-y-4">
-        <label class="block text-sm">Valor Numérico:
-          <input type="number" class="mt-1 w-full border border-gray-300 rounded px-2 py-1" />
-        </label>
-        <label class="block text-sm">
-          <input type="checkbox" class="mr-2" /> Ativar opção
-        </label>
-      </div>
-    </div>
-
-    <div class="bg-white rounded-lg shadow p-4 flex flex-col">
-      <h2 class="flex items-center gap-2 text-lg font-semibold text-black">
-        <Icon icon="ix:project-simulation" class="w-6 h-6" />
-        Simulação
-      </h2>
-      <div class="flex-grow flex items-center justify-center mt-4 border-2 border-dashed border-gray-300 rounded">
-        <p class="text-gray-500">Área de Simulação</p>
-      </div>
-      <div class="flex justify-center gap-4 mt-4">
-        <button class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Iniciar</button>
-        <button class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">Reiniciar</button>
-      </div>
-    </div>
-
-    <div class="bg-white rounded-lg shadow p-4 flex flex-col">
-      <h2 class="flex items-center gap-2 text-lg font-semibold text-black">
-        <Icon icon="tabler:chart-bar" class="w-6 h-6" />
-        Resultados
-      </h2>
-      <div class="mt-4 space-y-4">
-        <h3 class="font-bold">Gráfico 1</h3>
-        <canvas class="w-full h-40 bg-white rounded shadow"></canvas>
-        <h3 class="font-bold">Gráfico 2</h3>
-        <canvas class="w-full h-40 bg-white rounded shadow"></canvas>
+      <div class="bg-white rounded-lg shadow p-4 flex flex-col h-full overflow-auto">
+        <h2 class="flex items-center gap-2 text-lg font-semibold text-black">
+          <Icon icon="tabler:chart-bar" class="w-6 h-6" />
+          Resultados
+        </h2>
+        <div class="mt-4 space-y-4">
+          <h3 class="font-bold">Gráfico 1</h3>
+          <canvas class="w-full h-40 bg-white rounded shadow"></canvas>
+          <h3 class="font-bold">Gráfico 2</h3>
+          <canvas class="w-full h-40 bg-white rounded shadow"></canvas>
+        </div>
       </div>
     </div>
   </div>
