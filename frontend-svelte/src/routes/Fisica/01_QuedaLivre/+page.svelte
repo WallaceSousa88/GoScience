@@ -9,15 +9,11 @@
   }
 
   function handleKeydown(event: KeyboardEvent) {
-    if (event.key === 'Escape') {
-      fecharModal();
-    }
+    if (event.key === 'Escape') fecharModal();
   }
 
   function handleCliqueFora(event: MouseEvent) {
-    if (event.target === event.currentTarget) {
-      fecharModal();
-    }
+    if (event.target === event.currentTarget) fecharModal();
   }
 
   function autoFocus(node: HTMLElement) {
@@ -43,8 +39,8 @@
   });
 </script>
 
-<div class="flex flex-col h-screen overflow-hidden">
-  <div class="flex flex-col items-center justify-center gap-2 px-4 py-4 flex-none">
+<div class="flex flex-col flex-1 overflow-hidden">
+  <div class="flex-none flex flex-col items-center justify-center gap-2 px-4 py-4">
     <h1 class="text-3xl font-bold flex items-center gap-2 text-black">
       <Icon icon="hugeicons:hot-air-balloon" class="w-8 h-8" />
       Queda Livre
@@ -61,14 +57,14 @@
     </button>
   </div>
 
-  <div class="h-160 px-4 pb-4 overflow-hidden">
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 h-full">
-      <div class="bg-white rounded-lg shadow p-4 flex flex-col h-full overflow-auto">
+  <div class="flex-1 flex flex-col overflow-hidden px-4">
+    <div class="grid flex-1 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div class="bg-white rounded-lg shadow p-4 flex flex-col h-full overflow-hidden">
         <h2 class="flex items-center gap-2 text-lg font-semibold text-black">
           <Icon icon="tabler:math-function" class="w-6 h-6" />
           Fórmulas
         </h2>
-        <div class="mt-4 flex flex-col gap-4">
+        <div class="overflow-y-auto flex-1 mt-4 space-y-4">
           <div class="border border-gray-300 rounded-md p-3">
             <h3 class="font-bold text-center text-blue-700">Modelo Simplificado</h3>
             <p class="text-center mt-2 text-sm"><code>s = s₀ + v₀t + ½gt²</code></p>
@@ -93,28 +89,29 @@
         </div>
       </div>
 
-      <div class="bg-white rounded-lg shadow p-4 flex flex-col h-full overflow-auto">
+      <div class="bg-white rounded-lg shadow p-4 flex flex-col h-full overflow-hidden">
         <h2 class="flex items-center gap-2 text-lg font-semibold text-black">
           <Icon icon="tabler:settings" class="w-6 h-6" />
           Parâmetros
         </h2>
-        <div class="mt-4 space-y-4">
-          <label class="block text-sm">Valor Numérico:
+        <div class="overflow-y-auto flex-1 mt-4 space-y-4">
+          <label class="block text-sm">
+            Valor Numérico:
             <input type="number" class="mt-1 w-full border border-gray-300 rounded px-2 py-1" />
           </label>
           <label class="block text-sm">
-            <input type="checkbox" class="mr-2" /> Ativar opção
+            <input type="checkbox" class="mr-2" />
+            Ativar opção
           </label>
         </div>
-
       </div>
 
-      <div class="bg-white rounded-lg shadow p-4 flex flex-col h-full overflow-auto">
+      <div class="bg-white rounded-lg shadow p-4 flex flex-col h-full overflow-hidden">
         <h2 class="flex items-center gap-2 text-lg font-semibold text-black">
           <Icon icon="ix:project-simulation" class="w-6 h-6" />
           Simulação
         </h2>
-        <div class="flex-grow flex items-center justify-center mt-4 border-2 border-dashed border-gray-300 rounded">
+        <div class="overflow-y-auto flex-1 mt-4 border-2 border-dashed border-gray-300 rounded flex items-center justify-center">
           <p class="text-gray-500">Área de Simulação</p>
         </div>
         <div class="flex justify-center gap-4 mt-4">
@@ -123,12 +120,12 @@
         </div>
       </div>
 
-      <div class="bg-white rounded-lg shadow p-4 flex flex-col h-full overflow-auto">
+      <div class="bg-white rounded-lg shadow p-4 flex flex-col h-full overflow-hidden">
         <h2 class="flex items-center gap-2 text-lg font-semibold text-black">
           <Icon icon="tabler:chart-bar" class="w-6 h-6" />
           Resultados
         </h2>
-        <div class="mt-4 space-y-4">
+        <div class="overflow-y-auto flex-1 mt-4 space-y-4">
           <h3 class="font-bold">Gráfico 1</h3>
           <canvas class="w-full h-40 bg-white rounded shadow"></canvas>
           <h3 class="font-bold">Gráfico 2</h3>
@@ -155,15 +152,17 @@
 
         <div class="relative w-full h-32 flex flex-col justify-center px-4">
           <div class="flex items-center w-full">
-            <span class="text-xs text-gray-700 mr-2 flex-shrink-0">{1069}</span>
+            <span class="text-xs text-gray-700 mr-2 flex-shrink-0">1069</span>
             <div class="flex-1 h-0.5 bg-gray-300"></div>
-            <span class="text-xs text-gray-700 ml-2 flex-shrink-0">{1500}</span>
+            <span class="text-xs text-gray-700 ml-2 flex-shrink-0">1500</span>
           </div>
 
           <div class="grid grid-cols-3 gap-0 mt-6 text-center">
             {#each [1, 2, 3] as ponto}
               <div class="flex flex-col items-center">
-                <div class="bg-blue-500 text-white rounded-full w-8 h-8 flex items-center justify-center mb-2">{ponto}</div>
+                <div class="bg-blue-500 text-white rounded-full w-8 h-8 flex items-center justify-center mb-2">
+                  {ponto}
+                </div>
                 <h3 class="font-semibold text-sm">Evento {ponto}</h3>
                 <p class="text-xs text-gray-600">Descrição do evento {ponto}</p>
               </div>
