@@ -123,12 +123,6 @@
 		{/if}
 	</header>
 
-	<!-- <main class="flex-1 flex flex-col w-full px-6 overflow-hidden min-h-0">
-		<div class="flex-1 w-full overflow-y-auto">
-			<slot />
-		</div>
-	</main> -->
-
 	<main class="flex-1 flex flex-col w-full px-6 overflow-hidden">
 		<slot />
 	</main>
