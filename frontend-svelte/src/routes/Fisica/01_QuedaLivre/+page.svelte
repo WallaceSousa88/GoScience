@@ -30,15 +30,15 @@
     F: { N: 1, lbf: 4.44822 }
   };
 
-  let s: number | null = null;
+  let s: number | null = 0;
   let sUnit = 'm';
-  let s0: number | null = 0;
+  let s0: number | null = 10;
   let s0Unit = 'm';
   let v0: number | null = 0;
   let v0Unit = 'm/s';
-  let t: number | null = 2;
+  let t: number | null = null;
   let tUnit = 's';
-  let g: number | null = 9.8;
+  let g: number | null = -9.8;
   let gUnit = 'm/s²';
   let m: number | null = null;
   let mUnit = 'kg';
@@ -49,11 +49,13 @@
 
   let resultado = '';
   let variavelCalculada: string | null = null;
+
+  const alturaSimulacaoPx = 128;
   let posicaoY = 0;
+  let sFinalExibido: { valor: number | null, unidade: string } = { valor: s, unidade: sUnit };
+
   let startTime: number | null = null;
   let animationFrame: number | null = null;
-
-  const alturaMaximaPx = 128;
 
   function toSI(value: number | null, unit: string, type: UnidadeTipo): number | null {
     if (value === null) return null;
@@ -71,6 +73,8 @@
   }
 
   function iniciarSimulacao() {
+    if (animationFrame) cancelAnimationFrame(animationFrame);
+
     const sSI = toSI(s, sUnit, 's');
     const s0SI = toSI(s0, s0Unit, 's');
     const v0SI = toSI(v0, v0Unit, 'v');
@@ -79,6 +83,9 @@
     const mSI = toSI(m, mUnit, 'm');
     const kSI = toSI(k, kUnit, 'k');
     const FSI = toSI(F, FUnit, 'F');
+
+    let tempoTotalSI: number | null = null;
+    let sFinalSI: number | null = sSI;
 
     const usandoModeloReal = mSI !== null || kSI !== null || FSI !== null;
 
@@ -92,20 +99,21 @@
         return;
       }
     } else {
-       if (sSI === null && s0SI !== null && v0SI !== null && tSI !== null && gSI !== null) {
+      if (sSI === null && s0SI !== null && v0SI !== null && tSI !== null && gSI !== null) {
         const sCalc = s0SI + v0SI * tSI + 0.5 * gSI * tSI * tSI;
+        sFinalSI = sCalc;
+        tempoTotalSI = tSI;
         resultado = formatarResultado('Simplificado', 's', fromSI(sCalc, sUnit, 's'), sUnit);
         variavelCalculada = 's';
       } else if (s0SI === null && sSI !== null && v0SI !== null && tSI !== null && gSI !== null) {
         const s0Calc = sSI - v0SI * tSI - 0.5 * gSI * tSI * tSI;
+        tempoTotalSI = tSI;
         resultado = formatarResultado('Simplificado', 's₀', fromSI(s0Calc, s0Unit, 's'), s0Unit);
         variavelCalculada = 's₀';
       } else if (v0SI === null && sSI !== null && s0SI !== null && tSI !== null && gSI !== null) {
-        if (tSI === 0) {
-            resultado = 'Modelo Simplificado: O tempo não pode ser zero.';
-            return;
-        }
+        if (tSI === 0) { resultado = 'O tempo não pode ser zero.'; return; }
         const vCalc = (sSI - s0SI - 0.5 * gSI * tSI * tSI) / tSI;
+        tempoTotalSI = tSI;
         resultado = formatarResultado('Simplificado', 'v₀', fromSI(vCalc, v0Unit, 'v'), v0Unit);
         variavelCalculada = 'v₀';
       } else if (tSI === null && sSI !== null && s0SI !== null && v0SI !== null && gSI !== null) {
@@ -113,19 +121,18 @@
         const b = v0SI;
         const c = s0SI - sSI;
         const delta = b * b - 4 * a * c;
-        if (delta < 0) {
-          resultado = 'Modelo Simplificado: Não há solução real para o tempo.';
-          return;
-        }
-        const tCalc = (-b + Math.sqrt(delta)) / (2 * a);
+        if (delta < 0) { resultado = 'Não há solução real para o tempo.'; return; }
+        const tCalc1 = (-b + Math.sqrt(delta)) / (2 * a);
+        const tCalc2 = (-b - Math.sqrt(delta)) / (2 * a);
+        const tCalc = Math.max(tCalc1, tCalc2);
+        if (tCalc < 0) { resultado = 'O tempo calculado é negativo.'; return; }
+        tempoTotalSI = tCalc;
         resultado = formatarResultado('Simplificado', 't', fromSI(tCalc, tUnit, 't'), tUnit);
         variavelCalculada = 't';
       } else if (gSI === null && sSI !== null && s0SI !== null && v0SI !== null && tSI !== null) {
-        if (tSI === 0) {
-            resultado = 'Modelo Simplificado: O tempo não pode ser zero.';
-            return;
-        }
+        if (tSI * tSI === 0) { resultado = 'O tempo não pode ser zero.'; return; }
         const gCalc = 2 * (sSI - s0SI - v0SI * tSI) / (tSI * tSI);
+        tempoTotalSI = tSI;
         resultado = formatarResultado('Simplificado', 'g', fromSI(gCalc, gUnit, 'g'), gUnit);
         variavelCalculada = 'g';
       } else {
@@ -134,25 +141,35 @@
       }
     }
 
-    const distancia = sSI ?? (s0SI! + v0SI! * tSI! + 0.5 * gSI! * tSI! * tSI!);
-    const escala = alturaMaximaPx / distancia;
-    posicaoY = 0;
+    if (tempoTotalSI === null || s0SI === null || sFinalSI === null) return;
+
+    sFinalExibido = { valor: fromSI(sFinalSI, sUnit, 's'), unidade: sUnit };
+
     startTime = null;
-    if (animationFrame) cancelAnimationFrame(animationFrame);
 
     function animar(timestamp: number) {
       if (!startTime) startTime = timestamp;
       const elapsed = (timestamp - startTime) / 1000;
-      const sAtual = s0SI! + v0SI! * elapsed + 0.5 * gSI! * elapsed * elapsed;
-      let y = sAtual * escala;
 
-      if (y >= alturaMaximaPx) {
-        y = alturaMaximaPx;
-      } else {
-        animationFrame = requestAnimationFrame(animar);
+      if (elapsed >= tempoTotalSI!) {
+        posicaoY = alturaSimulacaoPx;
+        if (animationFrame) cancelAnimationFrame(animationFrame);
+        animationFrame = null;
+        return;
       }
 
-      posicaoY = y;
+      const sAtual = s0SI! + v0SI! * elapsed + 0.5 * gSI! * elapsed * elapsed;
+      const distanciaTotal = s0SI! - sFinalSI!;
+      const distanciaPercorrida = s0SI! - sAtual;
+
+      let fracaoPercorrida = 0;
+      if (distanciaTotal !== 0) {
+        fracaoPercorrida = distanciaPercorrida / distanciaTotal;
+      }
+
+      posicaoY = fracaoPercorrida * alturaSimulacaoPx;
+
+      animationFrame = requestAnimationFrame(animar);
     }
 
     animationFrame = requestAnimationFrame(animar);
@@ -162,8 +179,12 @@
     resultado = '';
     variavelCalculada = null;
     posicaoY = 0;
+    sFinalExibido = { valor: s, unidade: sUnit };
     startTime = null;
-    if (animationFrame) cancelAnimationFrame(animationFrame);
+    if (animationFrame) {
+        cancelAnimationFrame(animationFrame);
+        animationFrame = null;
+    }
   }
 
   function destaque(campo: string) {
@@ -185,34 +206,102 @@
 
   <svelte:fragment slot="parametros">
     <div class="flex-1 overflow-y-auto pr-2 -mr-2 space-y-2">
-      {#each [
-        { label: 'posição (s)', value: s, unit: sUnit, type: 's', options: ['m', 'ft', 'in'], key: 's' },
-        { label: 'posição inicial (s₀)', value: s0, unit: s0Unit, type: 's', options: ['m', 'ft', 'in'], key: 's₀' },
-        { label: 'velocidade inicial (v₀)', value: v0, unit: v0Unit, type: 'v', options: ['m/s', 'ft/s', 'in/s'], key: 'v₀' },
-        { label: 'tempo (t)', value: t, unit: tUnit, type: 't', options: ['s', 'ms'], key: 't' },
-        { label: 'gravidade (g)', value: g, unit: gUnit, type: 'g', options: ['m/s²', 'ft/s²'], key: 'g' },
-        { label: 'força (F)', value: F, unit: FUnit, type: 'F', options: ['N', 'lbf'], key: 'F' },
-        { label: 'massa (m)', value: m, unit: mUnit, type: 'm', options: ['kg', 'lb'], key: 'm' },
-        { label: 'resistência (k)', value: k, unit: kUnit, type: 'k', options: ['kg/s', 'lb/s'], key: 'k' }
-      ] as campo}
-        <label class="block text-sm">
-          {campo.label}
-          <div class="flex gap-2">
-            <input type="number" bind:value={campo.value} class={`mt-1 w-2/3 border border-gray-300 rounded px-2 py-1 ${destaque(campo.key)}`} />
-            <select bind:value={campo.unit} class="mt-1 w-1/3 border border-gray-300 rounded px-2 py-1">
-              {#each campo.options as opt}
-                <option value={opt}>{opt}</option>
-              {/each}
-            </select>
-          </div>
-        </label>
-      {/each}
+      <label class="block text-sm">
+        posição (s)
+        <div class="flex gap-2">
+          <input type="number" bind:value={s} class={`mt-1 w-2/3 border border-gray-300 rounded px-2 py-1 ${destaque('s')}`} />
+          <select bind:value={sUnit} class="mt-1 w-1/3 border border-gray-300 rounded px-2 py-1">
+            <option value="m">m</option>
+            <option value="ft">ft</option>
+            <option value="in">in</option>
+          </select>
+        </div>
+      </label>
+      <label class="block text-sm">
+        posição inicial (s₀)
+        <div class="flex gap-2">
+          <input type="number" bind:value={s0} class={`mt-1 w-2/3 border border-gray-300 rounded px-2 py-1 ${destaque('s₀')}`} />
+          <select bind:value={s0Unit} class="mt-1 w-1/3 border border-gray-300 rounded px-2 py-1">
+            <option value="m">m</option>
+            <option value="ft">ft</option>
+            <option value="in">in</option>
+          </select>
+        </div>
+      </label>
+      <label class="block text-sm">
+        velocidade inicial (v₀)
+        <div class="flex gap-2">
+          <input type="number" bind:value={v0} class={`mt-1 w-2/3 border border-gray-300 rounded px-2 py-1 ${destaque('v₀')}`} />
+          <select bind:value={v0Unit} class="mt-1 w-1/3 border border-gray-300 rounded px-2 py-1">
+            <option value="m/s">m/s</option>
+            <option value="ft/s">ft/s</option>
+            <option value="in/s">in/s</option>
+          </select>
+        </div>
+      </label>
+      <label class="block text-sm">
+        tempo (t)
+        <div class="flex gap-2">
+          <input type="number" bind:value={t} class={`mt-1 w-2/3 border border-gray-300 rounded px-2 py-1 ${destaque('t')}`} />
+          <select bind:value={tUnit} class="mt-1 w-1/3 border border-gray-300 rounded px-2 py-1">
+            <option value="s">s</option>
+            <option value="ms">ms</option>
+          </select>
+        </div>
+      </label>
+      <label class="block text-sm">
+        gravidade (g)
+        <div class="flex gap-2">
+          <input type="number" bind:value={g} class={`mt-1 w-2/3 border border-gray-300 rounded px-2 py-1 ${destaque('g')}`} />
+          <select bind:value={gUnit} class="mt-1 w-1/3 border border-gray-300 rounded px-2 py-1">
+            <option value="m/s²">m/s²</option>
+            <option value="ft/s²">ft/s²</option>
+          </select>
+        </div>
+      </label>
+       <label class="block text-sm">
+        força (F)
+        <div class="flex gap-2">
+          <input type="number" bind:value={F} class={`mt-1 w-2/3 border border-gray-300 rounded px-2 py-1 ${destaque('F')}`} />
+          <select bind:value={FUnit} class="mt-1 w-1/3 border border-gray-300 rounded px-2 py-1">
+            <option value="N">N</option>
+            <option value="lbf">lbf</option>
+          </select>
+        </div>
+      </label>
+      <label class="block text-sm">
+        massa (m)
+        <div class="flex gap-2">
+          <input type="number" bind:value={m} class={`mt-1 w-2/3 border border-gray-300 rounded px-2 py-1 ${destaque('m')}`} />
+          <select bind:value={mUnit} class="mt-1 w-1/3 border border-gray-300 rounded px-2 py-1">
+            <option value="kg">kg</option>
+            <option value="lb">lb</option>
+          </select>
+        </div>
+      </label>
+      <label class="block text-sm">
+        resistência (k)
+        <div class="flex gap-2">
+          <input type="number" bind:value={k} class={`mt-1 w-2/3 border border-gray-300 rounded px-2 py-1 ${destaque('k')}`} />
+          <select bind:value={kUnit} class="mt-1 w-1/3 border border-gray-300 rounded px-2 py-1">
+            <option value="kg/s">kg/s</option>
+            <option value="lb/s">lb/s</option>
+          </select>
+        </div>
+      </label>
     </div>
   </svelte:fragment>
 
   <svelte:fragment slot="simulacao">
     <div class="flex flex-col flex-1 mt-4">
-      <div class="border-2 border-dashed border-gray-300 rounded relative overflow-hidden flex-1">
+      <div class="border-2 border-dashed border-gray-300 rounded relative overflow-hidden flex-1" style="height: {alturaSimulacaoPx}px;">
+
+        <div class="absolute left-2 top-2 text-xs text-gray-700">s₀ = {s0 ?? '?'} {s0Unit}</div>
+
+        <div class="absolute left-2 bottom-2 text-xs text-gray-700">
+          s = {sFinalExibido.valor !== null ? sFinalExibido.valor.toFixed(2) : '?'} {sFinalExibido.unidade}
+        </div>
+
         <div
           class="w-6 h-6 bg-green-600/85 rounded-full absolute left-1/2 transform -translate-x-1/2"
           style="top: {posicaoY}px;"
